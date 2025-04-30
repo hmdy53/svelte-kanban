@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الأحول شات - دردشة متقدمة</title>
+    <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/295/295128.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #FF6B35;
+            --secondary-color: #004E89;
+            --dark-color: #1A1A2E;
+            --light-color: #F8F9FA;
+            --success-color: #28A745;
+            --error-color: #DC3545;
+            --warning-color: #FFC107;
+            --border-radius: 12px;
+            --box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Tajawal', sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        /* Header Styles */
+        .chat-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--box-shadow);
+            z-index: 10;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo i {
+            font-size: 1.8rem;
+        }
+
+        .logo-text {
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+
+        .user-controls {
+            display: flex;
+            gap: 15px;
+        }
+
+        .user-controls button {
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .user-controls button:hover {
+            transform: scale(1.1);
+        }
+
+        /* Chat Area Styles */
+        .chat-area {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background-color: #f0f2f5;
+            background-image: url('https://www.transparenttextures.com/patterns/always-grey.png');
+        }
+
+        .message {
+            max-width: 70%;
+            margin-bottom: 15px;
+            padding: 12px 15px;
+            border-radius: var(--border-radius);
+            position: relative;
+            word-wrap: break-word;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.sent {
+            background-color: var(--primary-color);
+            color: white;
+            margin-left: auto;
+            border-bottom-right-radius: 5px;
+        }
+
+        .message.received {
+            background-color: white;
+            color: #333;
+            margin-right: auto;
+            border-bottom-left-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .message-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 0.8rem;
+        }
+
+        .sender-name {
+            font-weight: bold;
+        }
+
+        .message-time {
+            opacity: 0.8;
+        }
+
+        .message-content {
+            line-height: 1.5;
+        }
+
+        .message-content img {
+            max-width: 100%;
+            border-radius: 8px;
+            margin-top: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Input Area Styles */
+        .input-area {
+            background-color: white;
+            padding: 15px;
+            display: flex;
+            gap: 10px;
+            border-top: 1px solid #e9ecef;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .message-input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            transition: var(--transition);
+            resize: none;
+            height: 50px;
+            max-height: 120px;
+        }
+
+        .message-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(255, 107, 53, 0.2);
+        }
+
+        .send-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .send-btn:hover {
+            background-color: #e05a2b;
+            transform: scale(1.05);
+        }
+
+        .send-btn i {
+            font-size: 1.2rem;
+        }
+
+        .attachment-btn {
+            background-color: #f0f2f5;
+            color: #666;
+            border: none;
+            border-radius: var(--border-radius);
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .attachment-btn:hover {
+            background-color: #e0e0e0;
+        }
+
+        /* Login Styles */
+        .login-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            padding: 20px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        }
+
+        .login-box {
+            background-color: white;
+            padding: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .login-logo {
+            margin-bottom: 20px;
+            color: var(--primary-color);
+            font-size: 2rem;
+        }
+
+        .login-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: var(--dark-color);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: right;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(255, 107, 53, 0.2);
+        }
+
+        .login-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            padding: 12px;
+            width: 100%;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .login-btn:hover {
+            background-color: #e05a2b;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .message {
+                max-width: 85%;
+            }
+            
+            .chat-header {
+                padding: 12px 15px;
+            }
+            
+            .logo-text {
+                font-size: 1.2rem;
+            }
+        }
+
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: var(--success-color);
+            color: white;
+            padding: 12px 20px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            z-index: 1000;
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            display: none;
+            width: 40px;
+            height: 40px;
+            margin: 20px auto;
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Container -->
+    <div class="login-container" id="login-container">
+        <div class="login-box">
+            <div class="login-logo">
+                <i class="fas fa-comments"></i>
+            </div>
+            <h1 class="login-title">الأحول شات</h1>
+            <div class="form-group">
+                <input type="text" id="username" class="form-control" placeholder="اسم المستخدم" required>
+            </div>
+            <div class="form-group">
+                <input type="password" id="password" class="form-control" placeholder="كلمة المرور" required>
+            </div>
+            <button class="login-btn" onclick="login()">دخول</button>
+        </div>
+    </div>
+
+    <!-- Chat Container -->
+    <div class="container" id="chat-container" style="display: none;">
+        <!-- Chat Header -->
+        <div class="chat-header">
+            <div class="logo">
+                <i class="fas fa-comments"></i>
+                <span class="logo-text">الأحول شات</span>
+            </div>
+            <div class="user-controls">
+                <button id="refresh-btn" title="تحديث المحادثة"><i class="fas fa-sync-alt"></i></button>
+                <button id="logout-btn" title="تسجيل الخروج"><i class="fas fa-sign-out-alt"></i></button>
+            </div>
+        </div>
+
+        <!-- Chat Area -->
+        <div class="chat-area" id="chat-area">
+            <div class="spinner" id="spinner"></div>
+            <!-- Messages will be inserted here -->
+        </div>
+
+        <!-- Input Area -->
+        <div class="input-area">
+            <button class="attachment-btn" id="attachment-btn" title="إرسال ملف">
+                <i class="fas fa-paperclip"></i>
+                <input type="file" id="file-input" style="display: none;" accept="image/*, video/*, .pdf, .doc, .docx">
+            </button>
+            <textarea class="message-input" id="message-input" placeholder="اكتب رسالتك هنا..." rows="1"></textarea>
+            <button class="send-btn" id="send-btn" title="إرسال">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div class="notification" id="notification"></div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDxw0Q5v5X5X5X5X5X5X5X5X5X5X5X5X5X",
+            authDomain: "al-ahwal-chat.firebaseapp.com",
+            databaseURL: "https://al-ahwal-chat-default-rtdb.firebaseio.com",
+            projectId: "al-ahwal-chat",
+            storageBucket: "al-ahwal-chat.appspot.com",
+            messagingSenderId: "123456789012",
+            appId: "1:123456789012:web:5X5X5X5X5X5X5X5X5X5X5X"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        const auth = firebase.auth();
+
+        // DOM Elements
+        const loginContainer = document.getElementById('login-container');
+        const chatContainer = document.getElementById('chat-container');
+        const chatArea = document.getElementById('chat-area');
+        const messageInput = document.getElementById('message-input');
+        const sendBtn = document.getElementById('send-btn');
+        const attachmentBtn = document.getElementById('attachment-btn');
+        const fileInput = document.getElementById('file-input');
+        const refreshBtn = document.getElementById('refresh-btn');
+        const logoutBtn = document.getElementById('logout-btn');
+        const notification = document.getElementById('notification');
+        const spinner = document.getElementById('spinner');
+
+        // Current user
+        let currentUser = null;
+
+        // Login function
+        function login() {
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+
+            if (!username || !password) {
+                showNotification('يرجى إدخال اسم المستخدم وكلمة المرور', 'error');
+                return;
+            }
+
+            // Simple authentication (in a real app, use Firebase Authentication properly)
+            if (password === "771905728") {
+                currentUser = {
+                    uid: generateUID(),
+                    username: username,
+                    lastSeen: new Date().toISOString()
+                };
+
+                // Show loading spinner
+                spinner.style.display = 'block';
+
+                // Simulate login process
+                setTimeout(() => {
+                    spinner.style.display = 'none';
+                    loginContainer.style.display = 'none';
+                    chatContainer.style.display = 'flex';
+                    showNotification(`مرحباً ${username}!`, 'success');
+                    
+                    // Load previous messages
+                    loadMessages();
+                }, 1000);
+            } else {
+                showNotification('كلمة المرور غير صحيحة', 'error');
+            }
+        }
+
+        // Generate simple UID
+        function generateUID() {
+            return 'user-' + Math.random().toString(36).substr(2, 9);
+        }
+
+        // Send message function
+        function sendMessage() {
+            const messageText = messageInput.value.trim();
+            
+            if (!messageText && !fileInput.files[0]) {
+                showNotification('يرجى إدخال رسالة أو اختيار ملف', 'warning');
+                return;
+            }
+
+            if (!currentUser) {
+                showNotification('يرجى تسجيل الدخول أولاً', 'error');
+                return;
+            }
+
+            const message = {
+                sender: currentUser.username,
+                senderId: currentUser.uid,
+                text: messageText,
+                timestamp: firebase.database.ServerValue.TIMESTAMP,
+                type: 'text'
+            };
+
+            // Handle file upload
+            if (fileInput.files[0]) {
+                const file = fileInput.files[0];
+                const fileType = getFileType(file.type);
+                
+                message.text = `[${fileType.toUpperCase()}] ${file.name}`;
+                message.file = {
+                    name: file.name,
+                    type: file.type,
+                    size: file.size,
+                    url: URL.createObjectURL(file)
+                };
+                message.type = fileType;
+            }
+
+            // Push message to Firebase
+            database.ref('messages').push(message)
+                .then(() => {
+                    messageInput.value = '';
+                    fileInput.value = '';
+                    chatArea.scrollTop = chatArea.scrollHeight;
+                })
+                .catch(error => {
+                    showNotification('حدث خطأ أثناء إرسال الرسالة', 'error');
+                    console.error('Error sending message:', error);
+                });
+        }
+
+        // Get file type
+        function getFileType(mimeType) {
+            if (mimeType.startsWith('image/')) return 'image';
+            if (mimeType.startsWith('video/')) return 'video';
+            if (mimeType.includes('pdf')) return 'pdf';
+            if (mimeType.includes('word') || mimeType.includes('document')) return 'doc';
+            return 'file';
+        }
+
+        // Load messages from Firebase
+        function loadMessages() {
+            database.ref('messages').orderByChild('timestamp').limitToLast(50).on('value', (snapshot) => {
+                chatArea.innerHTML = '';
+                const messages = [];
+                
+                snapshot.forEach((childSnapshot) => {
+                    messages.push({
+                        id: childSnapshot.key,
+                        ...childSnapshot.val()
+                    });
+                });
+
+                // Sort messages by timestamp
+                messages.sort((a, b) => a.timestamp - b.timestamp);
+
+                // Display messages
+                messages.forEach(msg => {
+                    displayMessage(msg);
+                });
+
+                // Scroll to bottom
+                setTimeout(() => {
+                    chatArea.scrollTop = chatArea.scrollHeight;
+                }, 100);
+            });
+        }
+
+        // Display a message in the chat area
+        function displayMessage(message) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${message.senderId === currentUser.uid ? 'sent' : 'received'}`;
+            
+            const messageInfo = document.createElement('div');
+            messageInfo.className = 'message-info';
+            
+            const senderName = document.createElement('span');
+            senderName.className = 'sender-name';
+            senderName.textContent = message.sender;
+            
+            const messageTime = document.createElement('span');
+            messageTime.className = 'message-time';
+            messageTime.textContent = formatTime(message.timestamp);
+            
+            messageInfo.appendChild(senderName);
+            messageInfo.appendChild(messageTime);
+            
+            const messageContent = document.createElement('div');
+            messageContent.className = 'message-content';
+            
+            if (message.type === 'text') {
+                messageContent.textContent = message.text;
+            } else if (message.type === 'image') {
+                messageContent.innerHTML = `
+                    <p>${message.text}</p>
+                    <img src="${message.file.url}" alt="الصورة المرسلة">
+                `;
+            } else if (message.type === 'video') {
+                messageContent.innerHTML = `
+                    <p>${message.text}</p>
+                    <video controls width="100%">
+                        <source src="${message.file.url}" type="${message.file.type}">
+                        متصفحك لا يدعم تشغيل الفيديو
+                    </video>
+                `;
+            } else {
+                messageContent.innerHTML = `
+                    <p>${message.text}</p>
+                    <a href="${message.file.url}" download="${message.file.name}" class="file-download">
+                        <i class="fas fa-download"></i> تحميل الملف
+                    </a>
+                `;
+            }
+            
+            messageDiv.appendChild(messageInfo);
+            messageDiv.appendChild(messageContent);
+            chatArea.appendChild(messageDiv);
+        }
+
+        // Format timestamp
+        function formatTime(timestamp) {
+            const date = new Date(timestamp);
+            return date.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
+        }
+
+        // Show notification
+        function showNotification(text, type) {
+            notification.textContent = text;
+            notification.style.display = 'block';
+            
+            // Set color based on type
+            switch(type) {
+                case 'success':
+                    notification.style.backgroundColor = 'var(--success-color)';
+                    break;
+                case 'error':
+                    notification.style.backgroundColor = 'var(--error-color)';
+                    break;
+                case 'warning':
+                    notification.style.backgroundColor = 'var(--warning-color)';
+                    break;
+                default:
+                    notification.style.backgroundColor = 'var(--primary-color)';
+            }
+            
+            // Hide after 3 seconds
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 3000);
+        }
+
+        // Event Listeners
+        sendBtn.addEventListener('click', sendMessage);
+        
+        messageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+        
+        attachmentBtn.addEventListener('click', () => {
+            fileInput.click();
+        });
+        
+        fileInput.addEventListener('change', () => {
+            if (fileInput.files[0]) {
+                showNotification('تم اختيار الملف: ' + fileInput.files[0].name, 'success');
+            }
+        });
+        
+        refreshBtn.addEventListener('click', loadMessages);
+        
+        logoutBtn.addEventListener('click', () => {
+            currentUser = null;
+            chatContainer.style.display = 'none';
+            loginContainer.style.display = 'flex';
+            showNotification('تم تسجيل الخروج بنجاح', 'success');
+        });
+
+        // Auto-resize textarea
+        messageInput.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+        });
+    </script>
+</body>
+</html>
